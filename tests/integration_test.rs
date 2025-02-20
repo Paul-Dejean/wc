@@ -13,17 +13,8 @@ fn create_temp_file(content: &str) -> NamedTempFile {
 }
 
 #[test]
-fn test_no_file_argument() {
-    let mut cmd = Command::cargo_bin("cwc-tool").unwrap();
-    cmd.arg("-c")
-        .assert()
-        .code(1)
-        .stderr(predicate::str::contains("cwc: Missing files argument"));
-}
-
-#[test]
 fn test_file_non_existent() {
-    let mut cmd = Command::cargo_bin("cwc-tool").unwrap();
+    let mut cmd = Command::cargo_bin("cwc").unwrap();
     let filename = "non_existent_file.txt";
 
     cmd.arg(filename)
@@ -38,7 +29,7 @@ fn test_file_non_existent() {
 #[test]
 fn test_count_bytes_one_file() {
     let file_content = "Hello, world!";
-    let mut cmd = Command::cargo_bin("cwc-tool").unwrap();
+    let mut cmd = Command::cargo_bin("cwc").unwrap();
     let file = create_temp_file(file_content);
     let file_path = file.path().to_str().unwrap();
 
@@ -65,7 +56,7 @@ fn test_count_bytes_two_files() {
     let file2 = create_temp_file(file_content2);
     let file_path2 = file2.path().to_str().unwrap();
 
-    let mut cmd = Command::cargo_bin("cwc-tool").unwrap();
+    let mut cmd = Command::cargo_bin("cwc").unwrap();
 
     let stdout_predicate = predicate::str::contains(&format!("{:>7} {}", 13, file_path1)).and(
         predicate::str::contains(&format!("{:>7} {}", 209, file_path2))
@@ -82,7 +73,7 @@ fn test_count_bytes_two_files() {
 fn test_count_lines_one_file() {
     let file_content = "Hello,
     world!";
-    let mut cmd = Command::cargo_bin("cwc-tool").unwrap();
+    let mut cmd = Command::cargo_bin("cwc").unwrap();
     let file = create_temp_file(file_content);
     let file_path = file.path().to_str().unwrap();
 
@@ -106,7 +97,7 @@ fn test_count_lines_two_files() {
     let file2 = create_temp_file(file_content2);
     let file_path2 = file2.path().to_str().unwrap();
 
-    let mut cmd = Command::cargo_bin("cwc-tool").unwrap();
+    let mut cmd = Command::cargo_bin("cwc").unwrap();
 
     let stdout_predicate = predicate::str::contains(&format!("{:>7} {}", 0, file_path1)).and(
         predicate::str::contains(&format!("{:>7} {}", 3, file_path2))
@@ -123,7 +114,7 @@ fn test_count_lines_two_files() {
 fn test_count_words_one_file() {
     let file_content = "Hello,
     world!";
-    let mut cmd = Command::cargo_bin("cwc-tool").unwrap();
+    let mut cmd = Command::cargo_bin("cwc").unwrap();
     let file = create_temp_file(file_content);
     let file_path = file.path().to_str().unwrap();
 
@@ -147,7 +138,7 @@ fn test_count_words_two_files() {
     let file2 = create_temp_file(file_content2);
     let file_path2 = file2.path().to_str().unwrap();
 
-    let mut cmd = Command::cargo_bin("cwc-tool").unwrap();
+    let mut cmd = Command::cargo_bin("cwc").unwrap();
 
     let stdout_predicate = predicate::str::contains(&format!("{:>7} {}", 2, file_path1)).and(
         predicate::str::contains(&format!("{:>7} {}", 41, file_path2))
@@ -163,7 +154,7 @@ fn test_count_words_two_files() {
 #[test]
 fn test_count_chars_one_file() {
     let file_content = "Comment ça va éléonore ?";
-    let mut cmd = Command::cargo_bin("cwc-tool").unwrap();
+    let mut cmd = Command::cargo_bin("cwc").unwrap();
     let file = create_temp_file(file_content);
     let file_path = file.path().to_str().unwrap();
 
@@ -190,7 +181,7 @@ fn test_count_chars_two_files() {
     let file2 = create_temp_file(file_content2);
     let file_path2 = file2.path().to_str().unwrap();
 
-    let mut cmd = Command::cargo_bin("cwc-tool").unwrap();
+    let mut cmd = Command::cargo_bin("cwc").unwrap();
 
     let stdout_predicate = predicate::str::contains(&format!("{:>7} {}", 24, file_path1)).and(
         predicate::str::contains(&format!("{:>7} {}", 209, file_path2))
@@ -206,7 +197,7 @@ fn test_count_chars_two_files() {
 #[test]
 fn test_no_flag_one_file() {
     let file_content = "Hello, world!";
-    let mut cmd = Command::cargo_bin("cwc-tool").unwrap();
+    let mut cmd = Command::cargo_bin("cwc").unwrap();
     let file = create_temp_file(file_content);
     let file_path = file.path().to_str().unwrap();
 
@@ -232,7 +223,7 @@ fn test_no_flag_two_files() {
     let file2 = create_temp_file(file_content2);
     let file_path2 = file2.path().to_str().unwrap();
 
-    let mut cmd = Command::cargo_bin("cwc-tool").unwrap();
+    let mut cmd = Command::cargo_bin("cwc").unwrap();
 
     let stdout_predicate =
         predicate::str::contains(&format!("{:>7} {:>7} {:>7} {}", 0, 2, 13, file_path1)).and(
@@ -244,4 +235,18 @@ fn test_no_flag_two_files() {
         .assert()
         .code(0)
         .stdout(stdout_predicate);
+}
+
+#[test]
+fn test_read_from_stdin() {
+    let input = "Hello, world!";
+    let mut cmd = Command::cargo_bin("cwc").unwrap();
+
+    cmd.write_stdin(input)
+        .assert()
+        .code(0)
+        .stdout(predicate::str::contains(&format!(
+            "{:>7} {:>7} {:>7}",
+            0, 2, 13
+        )));
 }
