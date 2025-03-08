@@ -8,20 +8,35 @@ use utils::{is_file_path_valid, print_error, read_file, read_from_stdin};
 
 #[derive(Parser, Debug)]
 #[command(name = "cwc")]
-#[command(author = "Ebooth <pauldejeandev@gmail.com>")]
+#[command(author = "Paul Dejean <pauldejeandev@gmail.com>")]
 #[command(version = "1.0")]
 #[command(about = "A copy of unix command line tool wc", long_about = None)]
 pub struct Args {
-    #[arg(short = 'c', group = "byte_count")]
+    #[arg(
+        short = 'c',
+        group = "byte_count",
+        help = "The number of bytes in each input file is written to the standard
+             output."
+    )]
     bytes: bool,
 
-    #[arg(short = 'l')]
+    #[arg(
+        short = 'l',
+        help = "The number of lines in each input file is written to the standard output."
+    )]
     lines: bool,
 
-    #[arg(short = 'w')]
+    #[arg(
+        short = 'w',
+        help = "The number of words in each input file is written to the standard output."
+    )]
     words: bool,
 
-    #[arg(short = 'm', group = "byte_count")]
+    #[arg(
+        short = 'm',
+        group = "byte_count",
+        help = "The number of characters in each input file is written to the standard output."
+    )]
     chars: bool,
 
     file_paths: Vec<String>,

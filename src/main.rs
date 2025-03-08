@@ -1,5 +1,5 @@
 use clap::Parser;
-use cwc_tool::{execute_command, Args};
+use cwc::{execute_command, Args};
 use std::process;
 
 fn main() {
